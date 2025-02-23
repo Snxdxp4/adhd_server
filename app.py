@@ -8,7 +8,7 @@ import numpy as np  # type: ignore
 app = Flask(__name__)
 CORS(app)
 
-model = joblib.load("D:/Web Projects/ADHD Sentimental/Server/model/AdaBoost.pkl")
+model = joblib.load("/model/AdaBoost.pkl")
 
 
 @app.route("/predict", methods=["POST"])
