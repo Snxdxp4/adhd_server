@@ -14,12 +14,13 @@ from flask_jwt_extended import (
 import joblib
 import bcrypt
 from dotenv import load_dotenv
+
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://adhd-client-dps1.vercel.app"}})
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-mongo = PyMongo(app) 
+mongo = PyMongo(app)
 if mongo.db is None:
     print("❌ MongoDB is NOT connected. Check your MONGO_URI and Flask setup.")
 else:
@@ -34,7 +35,8 @@ model = joblib.load("./model/AdaBoost.pkl")
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Hello World!"})
-    
+
+
 @app.route("/register", methods=["POST"])
 def register():
     print(request.get_json())
@@ -44,7 +46,7 @@ def register():
     password = data.get("password")
     if "users" not in mongo.db.list_collection_names():
         mongo.db.create_collection("users")
-        
+
     if not username or not password:
         return jsonify({"error": "Username and password are required"}), 400
 
@@ -53,7 +55,9 @@ def register():
         return jsonify({"error": "User already exists"}), 400
 
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-    mongo.db.users.insert_one({"email":email,"username": username, "password": hashed_password})
+    mongo.db.users.insert_one(
+        {"email": email, "username": username, "password": hashed_password}
+    )
 
     return jsonify({"message": "User registered successfully"}), 201
 
@@ -73,7 +77,7 @@ def login():
 
     # Generate JWT token
     access_token = create_access_token(identity=email)
-    return jsonify({"access_token": access_token,"userName":user["username"]}), 200
+    return jsonify({"access_token": access_token, "userName": user["username"]}), 200
 
 
 @app.route("/predict", methods=["POST"])
@@ -142,4 +146,5 @@ def server_error(error):
     return jsonify({"error": "Internal server error"}), 500
 
 
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
