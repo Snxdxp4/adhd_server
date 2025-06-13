@@ -19,14 +19,20 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://adhd-client.vercel.app"}})
-app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+app.config["MONGO_URI"] = "mongodb+srv://ss30040034:vJuyNbcETlFQaHXf@cluster0.bszuh.mongodb.net/adhd?retryWrites=true&w=majority&appName=Cluster0"
 mongo = PyMongo(app)
 if mongo.db is None:
     print("❌ MongoDB is NOT connected. Check your MONGO_URI and Flask setup.")
 else:
     print("✅ MongoDB connected successfully!")
+    # Ensure 'adhd' collection exists
+    if "adhd" not in mongo.db.list_collection_names():
+        mongo.db.create_collection("adhd")
+        print("📁 'adhd' collection created.")
+    else:
+        print("📁 'adhd' collection already exists.")
 
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_SECRET_KEY"] = "gjkbjigberjibhgjierbgbshgt54y79653ht5jb6u954y698p54huityvb54igh985yt635yuibwhivbuipghhgu95b8ty4793gthi5rgfgyufg5r8vbrhbvsjhguoiwrhtjk4hui345b34hkb534b5jk43jktb34ikvthj34g5hgreuobgjkerbtjk4b4tjk34k5b43jkb5hk43b6hk5b6nm53b6jb54jk6b54jkb634nb5jlk34h5uj34b5jl43nlk5h43uk6h34jlb6t34ntuo34uoit6bguo54hthj56hu546gjk54bjk35btuoirhgusdhvbsdoigferghuo3ryut983yuogno54y8054hgoy5rguivibeihebv5pg59hbgiypvbu9rebv985uit5u9gt5bthj34bhkb43hkz"
 jwt = JWTManager(app)
 
 model = joblib.load("./model/AdaBoost.pkl")
