@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://adhd-client-dps1.vercel.app"}})
+CORS(app, resources={r"/*": {"origins": "https://adhd-client.vercel.app"}})
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
 if mongo.db is None:
